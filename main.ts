@@ -8,41 +8,30 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile1`, function (sprite, l
 })
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     if (dog.vy == 0) {
-        dog.vy = -150
+        dog.vy = -180
     }
 })
 function start_level () {
-    info.setLife(3)
-    dog = sprites.create(img`
-        . . . . . f f f f f . . . . . . 
-        . . . f f 2 2 2 2 2 f f . . . . 
-        . . f 2 2 2 2 2 2 2 2 2 f . . . 
-        . f 2 2 2 2 2 2 2 2 2 2 2 f . . 
-        . f 2 2 2 2 2 2 2 2 2 2 2 f . . 
-        f 2 2 2 2 2 2 2 2 2 2 2 2 2 f . 
-        f 2 2 2 2 2 2 2 2 2 2 2 2 2 f . 
-        f 2 2 2 2 2 2 2 2 2 2 2 2 2 f . 
-        f 2 2 2 2 2 2 2 2 2 2 2 2 2 f . 
-        f 2 2 2 2 2 2 2 2 2 2 2 2 2 f . 
-        . f 2 2 2 2 2 2 2 2 2 2 2 f . . 
-        . f 2 2 2 2 2 2 2 2 2 2 2 f . . 
-        . . f 2 2 2 2 2 2 2 2 2 f . . . 
-        . . . f f 2 2 2 2 2 f f . . . . 
-        . . . . . f f f f f . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
-    scene.cameraFollowSprite(dog)
-    controller.moveSprite(dog, 100, 0)
     if (clevel == 0) {
         tiles.setTilemap(tilemap`level1`)
-    } else {
+    } else if (clevel == 1) {
         tiles.setTilemap(tilemap`level2`)
+    } else if (clevel == 2) {
+        tiles.setTilemap(tilemap`level3`)
+    } else {
+        game.over(true)
     }
     tiles.placeOnRandomTile(dog, assets.tile`myTile5`)
     for (let value of tiles.getTilesByType(assets.tile`myTile5`)) {
         tiles.setTileAt(value, assets.tile`transparency16`)
     }
     dog.ay = 300
+    for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
+        value.destroy()
+    }
+    for (let value of sprites.allOfKind(SpriteKind.coin)) {
+        value.destroy()
+    }
     for (let value of tiles.getTilesByType(assets.tile`myTile3`)) {
         coin = sprites.create(img`
             . . . . f f f f f f f . . . . . 
@@ -463,6 +452,27 @@ scene.setBackgroundImage(img`
     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     `)
 clevel = 0
+info.setLife(3)
+dog = sprites.create(img`
+    . . . . . f f f f f . . . . . . 
+    . . . f f 2 2 2 2 2 f f . . . . 
+    . . f 2 2 2 2 2 2 2 2 2 f . . . 
+    . f 2 2 2 2 2 2 2 2 2 2 2 f . . 
+    . f 2 2 2 2 2 2 2 2 2 2 2 f . . 
+    f 2 2 2 2 2 2 2 2 2 2 2 2 2 f . 
+    f 2 2 2 2 2 2 2 2 2 2 2 2 2 f . 
+    f 2 2 2 2 2 2 2 2 2 2 2 2 2 f . 
+    f 2 2 2 2 2 2 2 2 2 2 2 2 2 f . 
+    f 2 2 2 2 2 2 2 2 2 2 2 2 2 f . 
+    . f 2 2 2 2 2 2 2 2 2 2 2 f . . 
+    . f 2 2 2 2 2 2 2 2 2 2 2 f . . 
+    . . f 2 2 2 2 2 2 2 2 2 f . . . 
+    . . . f f 2 2 2 2 2 f f . . . . 
+    . . . . . f f f f f . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    `, SpriteKind.Player)
+scene.cameraFollowSprite(dog)
+controller.moveSprite(dog, 130, 0)
 start_level()
 game.onUpdate(function () {
     dog.setImage(img`
@@ -526,5 +536,11 @@ game.onUpdate(function () {
             `)
     } else {
     	
+    }
+    if (dog.isHittingTile(CollisionDirection.Left) || dog.isHittingTile(CollisionDirection.Right)) {
+        dog.vx = 0
+        dog.vy = 0
+    } else {
+        dog.vy = -180
     }
 })
